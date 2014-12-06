@@ -4,7 +4,6 @@ class SingyoFuck
 
   @@singyo  = File.read("./singyo.txt").gsub("\n","")
   @@table   = @@singyo.split("").sort.uniq.unshift(" ")
-  @@grammer = YAML.load(File.read("./grammer.yml"))
 
   attr_accessor :code
   attr_reader :pointer, :memory, :out
@@ -14,12 +13,14 @@ class SingyoFuck
     @pointer = 0
     @memory = Array.new((opts[:memory_size] || 300), 0)
     @loops = []
+    @grammer = YAML.load(File.read((opts[:grammer_file] || "./grammer.yml")))
   end
 
   def char_to_command(char)
-    @@grammer.each do |command, chars|
+    @grammer.each do |command, chars|
       return command.to_sym if chars.include? char
     end
+    return nil
   end
 
   def run
